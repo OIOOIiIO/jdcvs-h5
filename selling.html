@@ -1,0 +1,204 @@
+<html>
+	<head>
+		<title>Selling</title>
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script type="text/javascript" src="js/three.js"></script>
+        <script type="text/javascript" src="js/stats.js"></script>
+        <script type="text/javascript" src="js/OBJLoader.js" ></script>	
+        <script type="text/javascript" src="js/MTLLoader.js" ></script>
+    </head>
+    <body> 
+        <div id="logo"><img src="img/jd.png"  alt="JDlogo" height="40pt" /></div>
+        <div id="title"><img src="img/selling.png"  alt="title" width= 320pt /></div>
+        <div class="botton"><a href="coffee.html"><img src="img/next.png"  alt="botton" height="50pt" /></div>
+        <script>
+            //统一声明变量
+            var container, stats;
+			var camera, scene, light, raycaster, renderer;
+            var obj0;
+			var mouse = new THREE.Vector2(), INTERSECTED;
+            var radius = 100, theta = 0;
+            var tanFOV, windowHeight;
+            var hasTouch = 'ontouchstart' in window,
+            startEvent = hasTouch ? 'touchstart' : 'mousedown',
+            moveEvent = hasTouch ? 'touchmove' : 'mousemove',
+            endEvent = hasTouch ? 'touchend' : 'mouseup',
+            cancelEvent = hasTouch ? 'touchcancel' : 'mouseup';
+
+            draw();
+
+            function init(){
+                //scene
+                scene = new THREE.Scene();
+
+                //camera
+                camera = new THREE.PerspectiveCamera(30, window.innerWidth/window.innerHeight, 1, 10000);
+
+                // renderer 
+                renderer = new THREE.WebGLRenderer({alpha: true});
+                renderer.setPixelRatio( window.devicePixelRatio );
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                document.body.appendChild( renderer.domElement );
+
+                //raycaster
+                raycaster = new THREE.Raycaster();
+
+                //light
+                light = new THREE.PointLight( 0xFAFAD2 , 0.5);
+                light.position.set( 0, 70, -80 );
+                scene.add( light );
+
+                light = new THREE.PointLight( 0xFAFAD2 , 1.5);
+                light.position.set( 25, 0, 80 );
+                scene.add( light );
+
+                //instantiate a mtlloader
+                var mtlLoader = new THREE.MTLLoader();
+                mtlLoader.setPath( 'models/selling/' );
+                mtlLoader.load( 'selling.mtl', function( materials ) {
+
+                    materials.preload();
+
+                    // instantiate a objloader
+                    var objLoader = new THREE.OBJLoader();
+                    objLoader.setMaterials( materials );    //为模型添加素材
+                    objLoader.setPath( 'models/selling/' );         //为模型选择导入路径
+                    // load a resource
+                    objLoader.load(
+                        // resource URL
+                        '/selling.obj',
+                        // called when resource is loaded
+                        function ( object ) {
+
+                            obj0 = object;
+
+                            obj0.position.y -= 0.6;
+                            obj0.rotation.x += 0.5;
+                            obj0.rotation.y -= 0.25*Math.PI;
+                            // obj0.position.x = -1.4;
+                            // obj0.position.y = -1.2;
+
+                            object.children[0].geometry.center();
+                            scene.add( object );
+
+                        },
+                        // called when loading is in progresses
+                        function ( xhr ) {
+
+                            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+                        },
+                        // called when loading has errors
+                        function ( error ) {
+
+                            console.log( 'An error happened' );
+
+                        }
+                    );
+                } );
+                
+
+                // Event Listeners
+                document.addEventListener( startEvent , onMouseDown, false );
+                document.addEventListener( endEvent , onMouseup, false );
+                window.addEventListener( 'resize', onWindowResize, false );
+
+                // remember these initial values
+                tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
+                windowHeight = window.innerHeight;
+            }
+
+            function onWindowResize( event ) {
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+
+                // adjust the FOV   屏幕尺寸变化但是模型大小不变
+                //camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( window.innerHeight / windowHeight ) );
+
+                camera.updateProjectionMatrix();
+                camera.lookAt( scene.position );
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+            }
+
+            function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+            function render() {
+                theta += 0.01;
+
+                //obj0.rotation.y = theta;
+
+                camera.position.z = 30;
+				camera.lookAt( scene.position );
+				camera.updateMatrixWorld();
+
+                renderer.render( scene, camera );
+                
+			}
+            
+            function draw(){
+                init();
+                animate();
+            }
+            
+            function onMouseDown(event){
+                mouseDown = true;
+                if(startEvent == 'touchstart')
+                {
+                    mouseX = event.changedTouches[0].clientX;
+                    mouse.set( event.changedTouches[0].clientX, event.changedTouches[0].clientY );
+                }
+                else{ 
+                    mouseX = event.clientX; 
+                    mouse.set( event.clientX, event.clientY );
+                }
+
+                document.addEventListener( moveEvent , onMouseMove2, false );
+                console.log(mouseX);
+                
+            }
+
+            function onMouseup(event){      
+                mouseDown = false;
+
+                document.removeEventListener( moveEvent , onMouseMove2);
+            }
+
+            function onMouseMove2(event){
+                event.preventDefault();
+                if(!mouseDown){
+                    return;
+                }
+                if(startEvent == 'touchstart')
+                {
+                    var deltaX = event.changedTouches[0].clientX - mouseX;
+                    mouseX = event.changedTouches[0].clientX;
+                }
+                else{ 
+                    var deltaX = event.clientX - mouseX;
+                    mouseX = event.clientX;
+                }       
+                
+                rotateScene(deltaX);        
+                
+            }
+
+            //设置模型旋转速度，可以根据自己的需要调整
+            function rotateScene(deltaX){
+                var deg = deltaX/150;
+                //deg 设置模型旋转的弧度
+                obj0.rotation.y += deg;
+                
+                render();
+            }
+
+
+        </script>
+    </body>
+</html>

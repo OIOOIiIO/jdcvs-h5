@@ -25,7 +25,7 @@
             var container, stats;
 			var camera, scene, light, raycaster, renderer;
 			var mouse = new THREE.Vector2();
-            var radius = 100, theta = 0;
+            var radius = 100, theta = -0.5*Math.PI;
             var tanFOV, windowHeight;
             var colors = ['#E31D1A', '#FFFFFF', '#000000'];
             var random_color_index = Math.floor(Math.random() * colors.length);
@@ -86,12 +86,12 @@
 
                             obj0.position.y -= 0.6;
                             obj0.rotation.x += 0.5;
-                            obj0.rotation.y -= 0.25*Math.PI;
+                            obj0.rotation.y -= 0.5*Math.PI;
                             // obj0.position.x = -1.4;
                             // obj0.position.y = -1.2;
 
-                            object.children[0].geometry.center();
-                            scene.add( object );
+                            obj0.children[0].geometry.center();
+                            scene.add( obj0 );
 
                         },
                         // called when loading is in progresses
@@ -177,7 +177,7 @@
                             // obj2.position.x = -1.4;
                             // obj2.position.y = -1.2;
 
-                            object.children[0].geometry.center();
+                            obj2.children[0].geometry.center();
 
                         },
                         // called when loading is in progresses
@@ -398,6 +398,7 @@
             function render() {
                 theta += 0.01;
 
+                //模型还未加载完毕就会被添加旋转参数 所以可能报错
                 obj0.rotation.y = theta;
 
                 camera.position.z = 30;

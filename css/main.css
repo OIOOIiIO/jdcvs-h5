@@ -1,0 +1,59 @@
+body { 
+    background-image: url("https://oiooiiio.github.io/jdcvs-h5/img/bg.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    margin: 0px;
+    overflow: hidden; 
+    height: 100%;
+    -moz-user-select: none;
+    -webkit-user-select: none; 
+    -ms-user-select: none; 
+    -khtml-user-select: none;
+    user-select: none;
+}
+canvas { display: block; }
+#logo{ 
+    position:absolute;
+    text-align: center;
+    padding-top: 30px;
+    width: 100%;
+}
+#title{
+    position:absolute;
+    text-align: center;
+    padding-top: 80pt;
+    width: 100%;    
+}
+.botton{
+    position:absolute;
+    text-align: center;
+    width: 100%;
+    bottom: 11%;
+    user-select: none;
+}
+#pixel{
+    position:absolute;
+    text-align: right;
+    width: 100%;
+    right: 3%;
+    bottom: 1%;
+    user-select: none;
+}
+#myp{
+    position:absolute;
+}
+a{
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    -webkit-user-select: none;
+    -moz-user-focus: none;
+    -moz-user-select: none;
+}
+* { touch-action: pan-y; }
+
+.wrap{position:relative;color:#fff; height: 100%; overflow: hidden;}
+.item {width: 100%;height: 100%;overflow: hidden;}
+
+.item-1 {background-image: url("https://oiooiiio.github.io/jdcvs-h5/img/bg.png");}
+.item-2 {background-image: url("https://oiooiiio.github.io/jdcvs-h5/img/bg.png");}
